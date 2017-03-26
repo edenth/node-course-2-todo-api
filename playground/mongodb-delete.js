@@ -29,10 +29,10 @@ MongoClient.connect('mongodb://localhost:27017/TodoApp',(err, db) => {
   // });
 
   //deleteById
-  var userID = new ObjectID("58d2b11776e5940d989a19a7");
-  db.collection('Users').findOneAndDelete({_id: userID}).then((result) => {
-    console.log(result);
-  });
+  // db.collection('Users').findOneAndDelete({
+  //   _id: new ObjectID("58d2b11776e5940d989a19a7"}).then((result) => {
+  //   console.log(result);
+  // });
 
 //db.close();
 });
