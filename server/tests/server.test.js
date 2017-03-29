@@ -8,9 +8,11 @@ const {User} = require('./../models/user');
 
 const todos = [{
   _id: new ObjectID(),
+  title: 'FirstTestTodo',
   text: 'First todo'
 },{
   _id: new ObjectID(),
+  title: 'SecondTestTodo',
   text: 'Second todo',
   completed: true,
   completedAt: 333
@@ -25,13 +27,15 @@ beforeEach((done) => {
 describe('POST /todos',() => {
   it('should create a new todo', (done) => {
     var text = 'Test todo text';
+    var title = 'FirstTestTodo';
 
     request(app)
       .post('/todos')
-      .send({text})
+      .send({title,text})
       .expect(200)
       .expect((res) => {
         expect(res.body.text).toBe(text);
+        expect(res.body.title).toBe(title);
       })
       .end((err,res) => {
         if(err){
@@ -81,6 +85,7 @@ describe('GET /todos/:id',() => {
     .get(`/todos/${todos[0]._id.toHexString()}`)
     .expect(200)
     .expect((res) => {
+      expect(res.body.todo.title).toBe(todos[0].title);
       expect(res.body.todo.text).toBe(todos[0].text);
     })
     .end(done);
@@ -176,6 +181,35 @@ describe('PATCH /todos/:id',() => {
     .expect((res) => {
       expect(res.body.todo.completed).toBe(false);
       expect(res.body.todo.text).toBe(text);
+      expect(res.body.todo.completedAt).toNotExist();
+    })
+    .end(done)
+  });
+});
+
+describe('PATCH /todos/status/:id',() => {
+  it('should update todo status to complete',(done) => {
+    var hexId = todos[0]._id.toHexString();
+
+    request(app)
+    .patch(`/todos/status/${hexId}`)
+    .send({completed: true})
+    .expect(200)
+    .expect((res) => {
+      expect(res.body.todo.completed).toBe(true);
+    })
+    .end(done)
+  });
+
+  it('should update todo status to incompleted and clear completeAt',(done) => {
+    var hexId = todos[1]._id.toHexString();
+
+    request(app)
+    .patch(`/todos/status/${hexId}`)
+    .send({completed: false})
+    .expect(200)
+    .expect((res) => {
+      expect(res.body.todo.completed).toBe(false);
       expect(res.body.todo.completedAt).toNotExist();
     })
     .end(done)
