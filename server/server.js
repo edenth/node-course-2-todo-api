@@ -14,6 +14,11 @@ const port = process.env.PORT;
 
 app.use(bodyParser.json());
 
+// app.use((req, res, next) => {
+//           res.setHeader('Access-Control-Allow-Origin', '*');
+//           next();
+//       });
+
 app.post('/todos',(req,res) => {
   var todo = new Todo({
     title: req.body.title,
